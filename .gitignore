@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.knowledge-cache/
+*.log
+.DS_Store
+*.tsbuildinfo

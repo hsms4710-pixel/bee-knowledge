@@ -1,0 +1,27 @@
+{
+  "name": "bee-knowledge",
+  "version": "1.0.0",
+  "description": "基于MapReduce的项目知识沉淀系统 - 支持TypeScript/Go/Proto多语言",
+  "main": "scripts/build-knowledge-v2.ts",
+  "scripts": {
+    "build": "npx ts-node scripts/build-knowledge-v2.ts",
+    "build:incremental": "npx ts-node scripts/build-knowledge-v2.ts --incremental",
+    "retrospective": "npx ts-node scripts/build-knowledge-v2.ts --retrospective"
+  },
+  "keywords": [
+    "knowledge",
+    "mapreduce",
+    "typescript",
+    "go",
+    "proto"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0"
+  }
+}

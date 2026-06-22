@@ -1,0 +1,173 @@
+{
+  "version": "1.0.0",
+  "description": "知识库评估体系 - 基于《洛克王国》100问题验证方法",
+  "lastUpdated": "2026-06-22T14:30:00.000Z",
+  "evaluationDimensions": [
+    {
+      "name": "代码生成准确性",
+      "description": "AI 生成的代码是否能直接运行",
+      "weight": 0.3
+    },
+    {
+      "name": "问题理解准确性",
+      "description": "AI 是否正确理解图相关的概念",
+      "weight": 0.3
+    },
+    {
+      "name": "文档更新及时性",
+      "description": "代码变更后文档是否同步更新",
+      "weight": 0.2
+    },
+    {
+      "name": "工具调用成功率",
+      "description": "CLI/MCP 工具是否稳定可用",
+      "weight": 0.2
+    }
+  ],
+  "standardQuestions": [
+    {
+      "id": "Q001",
+      "category": "架构理解",
+      "question": "GDD 项目的核心数据结构是什么？",
+      "expectedAnswer": "Graph、Node、Edge 是核心数据结构，定义在 src/core/ 目录",
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q002",
+      "category": "架构理解",
+      "question": "图的层级结构是怎样的？",
+      "expectedAnswer": "L1_Constitution → L2_TechStack → L3_Epic → L4_Story → L5_Task",
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q003",
+      "category": "架构理解",
+      "question": "MCP 工具的主要功能是什么？",
+      "expectedAnswer": "提供图操作工具（addNode、addEdge、getNode 等）和上下文工具",
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q004",
+      "category": "API 使用",
+      "question": "如何创建一个新的图节点？",
+      "expectedAnswer": "使用 graphStore.addNode(graphId, { id, label, type, layer, properties })",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q005",
+      "category": "API 使用",
+      "question": "如何查询某一层级的所有节点？",
+      "expectedAnswer": "使用 graphStore.getGraph(graphId).nodes.filter(n => n.layer === targetLayer)",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q006",
+      "category": "API 使用",
+      "question": "如何获取节点的所有入边？",
+      "expectedAnswer": "使用 graphStore.getGraph(graphId).edges.filter(e => e.to === nodeId)",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q007",
+      "category": "模块关系",
+      "question": "brainstorm 模块的作用是什么？",
+      "expectedAnswer": "提供智能提问生成功能，分析项目上下文生成引导问题",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q008",
+      "category": "模块关系",
+      "question": "agent-adapter 模块支持哪些 Agent？",
+      "expectedAnswer": "支持 Claude Code、Codex CLI、CodeBuddy、TRAE 等",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q009",
+      "category": "模块关系",
+      "question": "indexer 模块的功能是什么？",
+      "expectedAnswer": "代码索引器，支持增量索引和框架分析",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q010",
+      "category": "技术细节",
+      "question": "项目使用什么状态管理方案？",
+      "expectedAnswer": "使用 Zustand 进行状态管理，graphStore 是核心 store",
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q011",
+      "category": "技术细节",
+      "question": "MCP 服务器有几种实现？",
+      "expectedAnswer": "有 server.ts、server-simple.ts、server-http.ts、server-enhanced.ts 等多种实现",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q012",
+      "category": "技术细节",
+      "question": "如何序列化和反序列化图数据？",
+      "expectedAnswer": "使用 src/core/serializer.ts 中的 serialize/deserialize 函数",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q013",
+      "category": "测试覆盖",
+      "question": "项目有哪些测试文件？",
+      "expectedAnswer": "test/ 目录包含多个版本的测试文件，如 v1.1-test.ts 到 v5.0-test.ts",
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q014",
+      "category": "测试覆盖",
+      "question": "综合测试覆盖哪些功能？",
+      "expectedAnswer": "comprehensive-e2e-test.ts 覆盖图数据结构、查询、节点模板等功能",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q015",
+      "category": "扩展性",
+      "question": "enterprise 模块提供了哪些企业级功能？",
+      "expectedAnswer": "协作管理、分布式索引、通知管理、项目管理、查询优化、用户管理",
+      "difficulty": "hard"
+    },
+    {
+      "id": "Q016",
+      "category": "扩展性",
+      "question": "如何添加新的节点类型模板？",
+      "expectedAnswer": "使用 NodeTemplateManager，可以通过 addTemplate 方法添加新模板",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q017",
+      "category": "扩展性",
+      "question": "如何集成新的 Coding Agent？",
+      "expectedAnswer": "继承 AgentAdapterBase 类，实现 execute 和 getCapabilities 方法",
+      "difficulty": "hard"
+    },
+    {
+      "id": "Q018",
+      "category": "工作流",
+      "question": "知识库如何自动更新？",
+      "expectedAnswer": "使用 Hash 缓存机制，运行 build-knowledge.ts --incremental 进行增量更新",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q019",
+      "category": "工作流",
+      "question": "AI 助手如何使用知识库？",
+      "expectedAnswer": "先读 MEMORY.md，再读 index.json，根据任务读取具体模块文档",
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q020",
+      "category": "综合",
+      "question": "GDD 项目的整体架构是怎样的？",
+      "expectedAnswer": "基于图的开发驱动系统，核心模块包括 core（图数据）、mcp（工具）、brainstorm（智能提问）、agent-adapter（Agent 集成）",
+      "difficulty": "hard"
+    }
+  ],
+  "evaluationResults": {
+    "lastEvaluation": null,
+    "history": []
+  }
+}

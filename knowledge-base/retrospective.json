@@ -1,0 +1,70 @@
+{
+  "config": {
+    "enabled": true,
+    "evaluationDimensions": {
+      "rootCauseAccuracy": {
+        "weight": 0.3,
+        "threshold": 0.7
+      },
+      "moduleLocationAccuracy": {
+        "weight": 0.25,
+        "threshold": 0.7
+      },
+      "logExplanationAccuracy": {
+        "weight": 0.2,
+        "threshold": 0.6
+      },
+      "codeFixApplicability": {
+        "weight": 0.25,
+        "threshold": 0.6
+      }
+    }
+  },
+  "records": [
+    {
+      "id": "retro-001",
+      "timestamp": "2026-06-22T06:59:08.970Z",
+      "question": "如何创建一个新图？",
+      "expectedAnswer": "使用 Graph 类的构造函数或工厂方法创建图实例",
+      "actualAnswer": "",
+      "metrics": {},
+      "status": "pending"
+    },
+    {
+      "id": "retro-002",
+      "timestamp": "2026-06-22T06:59:08.970Z",
+      "question": "MCP 工具有哪些？",
+      "expectedAnswer": "MCP 工具包括图操作工具（添加/删除节点、边）、查询工具（获取图信息）、导出工具等",
+      "actualAnswer": "",
+      "metrics": {},
+      "status": "pending"
+    },
+    {
+      "id": "retro-003",
+      "timestamp": "2026-06-22T06:59:08.970Z",
+      "question": "节点的数据结构是什么？",
+      "expectedAnswer": "Node 接口包含 id、label、data 等属性，用于表示图中的节点",
+      "actualAnswer": "",
+      "metrics": {},
+      "status": "pending"
+    },
+    {
+      "id": "retro-004",
+      "timestamp": "2026-06-22T06:59:08.970Z",
+      "question": "如何将图导出为 JSON？",
+      "expectedAnswer": "使用 Graph 的 toJSON 方法或 MCP 工具的导出功能",
+      "actualAnswer": "",
+      "metrics": {},
+      "status": "pending"
+    },
+    {
+      "id": "retro-005",
+      "timestamp": "2026-06-22T06:59:08.970Z",
+      "question": "边的属性有哪些？",
+      "expectedAnswer": "Edge 接口包含 id、source、target、label、data 等属性",
+      "actualAnswer": "",
+      "metrics": {},
+      "status": "pending"
+    }
+  ]
+}
