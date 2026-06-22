@@ -9,7 +9,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { BaseAdapter, LanguageAdapter } from '../base-adapter';
+import { BaseAdapter } from '../base-adapter';
 import {
   FileExtractionResult,
   ExtractedType,
@@ -18,6 +18,7 @@ import {
   ExtractedCoreFlows,
   ExtractedDependencies,
   JSDocInfo,
+  LanguageAdapter,
 } from '../types';
 
 /**

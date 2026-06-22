@@ -23,6 +23,7 @@ import {
   SubmoduleInfo,
   KnowledgeIndex,
   HashCache,
+  TestInfo,
   TestSuite,
 } from './adapters';
 
@@ -94,8 +95,8 @@ export class KnowledgeBuilder {
     };
     
     // 收集所有文件
-    const sourceFiles = this.collectFiles(srcDir, this.config.srcDirs, this.config.exclude);
-    const testFiles = this.collectFiles(srcDir, this.config.testDirs, this.config.exclude);
+    const sourceFiles = this.collectFiles(srcDir, this.config.srcDirs, this.config.exclude, 'source');
+    const testFiles = this.collectFiles(srcDir, this.config.testDirs, this.config.exclude, 'test');
     
     console.log(`📚 知识沉淀系统（MapReduce 架构）`);
     console.log(`📂 项目: ${srcDir}`);
@@ -198,6 +199,8 @@ export class KnowledgeBuilder {
     // ==========================================
     // 测试用例处理
     // ==========================================
+    let testSuiteCount = 0;
+
     if (testFiles.length > 0) {
       console.log('🧪 Map 阶段：提取测试用例信息...');
       console.log(`   找到 ${testFiles.length} 个测试文件`);
@@ -217,6 +220,7 @@ export class KnowledgeBuilder {
       // 合并测试用例
       console.log('   合并测试用例...');
       const testSuites = this.mergeTests(testExtractions);
+      testSuiteCount = testSuites.length;
       
       // 生成测试文档
       const testsMarkdown = this.generateTestsMarkdown(testSuites);
@@ -242,7 +246,7 @@ export class KnowledgeBuilder {
     }
     
     // 生成索引
-    const index = this.generateIndex(modules, testFiles.length > 0 ? testSuites.length : 0);
+    const index = this.generateIndex(modules, testSuiteCount);
     fs.writeFileSync(path.join(outputDir, 'index.json'), JSON.stringify(index, null, 2));
     console.log('   ✓ index.json');
     
@@ -280,7 +284,8 @@ export class KnowledgeBuilder {
   private collectFiles(
     srcDir: string,
     targetDirs: string[],
-    exclude: string[]
+    exclude: string[],
+    fileType?: 'source' | 'test' | 'proto' | 'config'
   ): string[] {
     const files: string[] = [];
     
@@ -289,20 +294,23 @@ export class KnowledgeBuilder {
       const dirPath = path.join(srcDir, targetDir);
       
       if (fs.existsSync(dirPath)) {
-        this.walkDir(dirPath, exclude, files);
+        this.walkDir(dirPath, exclude, files, fileType);
       }
     }
     
     // 如果目标目录没有找到文件，扫描整个项目
     if (files.length === 0) {
       console.log('   ℹ️  未在标准目录找到文件，扫描整个项目...');
-      this.walkDir(srcDir, exclude, files);
+      this.walkDir(srcDir, exclude, files, fileType);
     }
     
-    return files.filter(f => registry.findForFile(f));
+    return files.filter(f => {
+      const adapter = registry.findForFile(f);
+      return adapter && (!fileType || adapter.fileType === fileType);
+    });
   }
   
-  private walkDir(dir: string, exclude: string[], files: string[]): void {
+  private walkDir(dir: string, exclude: string[], files: string[], fileType?: 'source' | 'test' | 'proto' | 'config'): void {
     if (!fs.statSync(dir).isDirectory()) return;
     
     for (const entry of fs.readdirSync(dir)) {
@@ -310,14 +318,17 @@ export class KnowledgeBuilder {
       const stat = fs.statSync(fullPath);
       
       // 检查是否在排除列表中
-      if (exclude.some(e => entry === e || entry.endsWith(e))) {
+      if (exclude.some(e => entry === e || (e.startsWith('*') && entry.endsWith(e.slice(1))))) {
         continue;
       }
       
       if (stat.isDirectory()) {
-        this.walkDir(fullPath, exclude, files);
-      } else if (registry.findForFile(fullPath)) {
+        this.walkDir(fullPath, exclude, files, fileType);
+      } else {
+        const adapter = registry.findForFile(fullPath);
+        if (adapter && (!fileType || adapter.fileType === fileType)) {
         files.push(fullPath);
+        }
       }
     }
   }
@@ -489,7 +500,14 @@ export class KnowledgeBuilder {
       suites.get(suiteName)!.push({
         name: extraction.file.replace(/\.(test|spec)\.[tj]s/, ''),
         file: extraction.file,
-        flows: extraction.coreFlows,
+        flows: {
+          setup: extraction.coreFlows.initialization || [],
+          actions: [
+            ...(extraction.coreFlows.eventHandlers || []),
+            ...(extraction.coreFlows.stateTransitions || []),
+          ],
+          assertions: extraction.coreFlows.other || [],
+        },
         features: extraction.types.map(t => t.function),
         testObjects: extraction.functions.map(f => f.name),
         edgeCases: [],
@@ -539,8 +557,9 @@ export class KnowledgeBuilder {
           lines.push(`- 字段: ${type.fields.join(', ')}`);
         }
         
-        if (type.methods?.length > 0) {
-          lines.push(`- 方法: ${type.methods.join(', ')}`);
+        const methods = type.methods || [];
+        if (methods.length > 0) {
+          lines.push(`- 方法: ${methods.join(', ')}`);
         }
         
         lines.push('');
@@ -582,32 +601,37 @@ export class KnowledgeBuilder {
     if (Object.values(module.coreFlows).some(v => v?.length > 0)) {
       lines.push('## 核心流程');
       lines.push('');
+
+      const initialization = module.coreFlows.initialization || [];
+      const stateTransitions = module.coreFlows.stateTransitions || [];
+      const networkOperations = module.coreFlows.networkOperations || [];
+      const persistence = module.coreFlows.persistence || [];
       
-      if (module.coreFlows.initialization?.length > 0) {
+      if (initialization.length > 0) {
         lines.push('### 初始化');
         lines.push('');
-        lines.push(module.coreFlows.initialization.map(f => `- ${f}`).join('\n'));
+        lines.push(initialization.map(f => `- ${f}`).join('\n'));
         lines.push('');
       }
       
-      if (module.coreFlows.stateTransitions?.length > 0) {
+      if (stateTransitions.length > 0) {
         lines.push('### 状态转化');
         lines.push('');
-        lines.push(module.coreFlows.stateTransitions.map(f => `- ${f}`).join('\n'));
+        lines.push(stateTransitions.map(f => `- ${f}`).join('\n'));
         lines.push('');
       }
       
-      if (module.coreFlows.networkOperations?.length > 0) {
+      if (networkOperations.length > 0) {
         lines.push('### 网络操作');
         lines.push('');
-        lines.push(module.coreFlows.networkOperations.map(f => `- ${f}`).join('\n'));
+        lines.push(networkOperations.map(f => `- ${f}`).join('\n'));
         lines.push('');
       }
       
-      if (module.coreFlows.persistence?.length > 0) {
+      if (persistence.length > 0) {
         lines.push('### 持久化');
         lines.push('');
-        lines.push(module.coreFlows.persistence.map(f => `- ${f}`).join('\n'));
+        lines.push(persistence.map(f => `- ${f}`).join('\n'));
         lines.push('');
       }
     }
@@ -650,22 +674,26 @@ export class KnowledgeBuilder {
       for (const test of suite.tests) {
         lines.push(`### ${test.name}`);
         lines.push('');
+
+        const setup = test.flows.setup || [];
+        const actions = test.flows.actions || [];
+        const assertions = test.flows.assertions || [];
         
-        if (test.flows.setup?.length > 0) {
+        if (setup.length > 0) {
           lines.push('**Setup:**');
-          lines.push(test.flows.setup.map(s => `- ${s}`).join('\n'));
+          lines.push(setup.map(s => `- ${s}`).join('\n'));
           lines.push('');
         }
         
-        if (test.flows.actions?.length > 0) {
+        if (actions.length > 0) {
           lines.push('**Actions:**');
-          lines.push(test.flows.actions.map(a => `- ${a}`).join('\n'));
+          lines.push(actions.map(a => `- ${a}`).join('\n'));
           lines.push('');
         }
         
-        if (test.flows.assertions?.length > 0) {
+        if (assertions.length > 0) {
           lines.push('**Assertions:**');
-          lines.push(test.flows.assertions.map(a => `- ${a}`).join('\n'));
+          lines.push(assertions.map(a => `- ${a}`).join('\n'));
           lines.push('');
         }
         
@@ -808,4 +836,9 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch(console.error);
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}

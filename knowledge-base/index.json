@@ -1,11 +1,28 @@
 {
-  "generatedAt": "2026-06-22T07:45:59.546Z",
-  "projectName": "graph-driven-development",
-  "languages": [],
-  "modules": [],
+  "generatedAt": "2026-06-22T17:17:58.643Z",
+  "projectName": "bee-knowledge",
+  "languages": [
+    "typescript"
+  ],
+  "modules": [
+    {
+      "name": "knowledge-system",
+      "language": "typescript",
+      "typeCount": 22,
+      "functionCount": 0,
+      "enumCount": 0
+    },
+    {
+      "name": "scripts",
+      "language": "typescript",
+      "typeCount": 0,
+      "functionCount": 0,
+      "enumCount": 0
+    }
+  ],
   "statistics": {
-    "totalFiles": 0,
-    "totalTypes": 0,
+    "totalFiles": 10,
+    "totalTypes": 22,
     "totalFunctions": 0,
     "totalEnums": 0
   }

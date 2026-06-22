@@ -9,11 +9,12 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { BaseAdapter, LanguageAdapter } from '../base-adapter';
+import { BaseAdapter } from '../base-adapter';
 import {
   FileExtractionResult,
   ExtractedCoreFlows,
   ExtractedDependencies,
+  LanguageAdapter,
   TestInfo,
 } from '../types';
 
@@ -40,6 +41,13 @@ export abstract class TestAdapter extends BaseAdapter implements LanguageAdapter
    */
   protected readFile(filePath: string): string {
     return fs.readFileSync(filePath, 'utf-8');
+  }
+
+  canHandle(filePath: string): boolean {
+    if (!super.canHandle(filePath)) return false;
+
+    const fileName = path.basename(filePath);
+    return /\.(test|spec)\.[tj]sx?$/.test(fileName) || filePath.includes(`${path.sep}test${path.sep}`) || filePath.includes(`${path.sep}tests${path.sep}`);
   }
   
   /**

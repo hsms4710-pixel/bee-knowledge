@@ -17,6 +17,8 @@ export abstract class BaseAdapter implements LanguageAdapter {
   abstract readonly language: string;
   abstract readonly extensions: string[];
   abstract readonly fileType: 'source' | 'test' | 'proto' | 'config';
+
+  abstract extract(content: string, filePath: string): FileExtractionResult;
   
   /**
    * 判断是否可以处理该文件
@@ -30,7 +32,10 @@ export abstract class BaseAdapter implements LanguageAdapter {
    * 从文件路径提取模块名（目录名）
    */
   protected getModuleName(filePath: string, srcDir: string): string {
-    const relativePath = filePath.replace(srcDir, '').replace(/^\//, '');
+    const relativePath = filePath
+      .replace(srcDir, '')
+      .replace(/^[\\/]/, '')
+      .replace(/\\/g, '/');
     const parts = relativePath.split('/');
     return parts[0] || 'root';
   }
@@ -39,7 +44,10 @@ export abstract class BaseAdapter implements LanguageAdapter {
    * 从文件路径提取子模块名（二级目录）
    */
   protected getSubmoduleName(filePath: string, srcDir: string): string {
-    const relativePath = filePath.replace(srcDir, '').replace(/^\//, '');
+    const relativePath = filePath
+      .replace(srcDir, '')
+      .replace(/^[\\/]/, '')
+      .replace(/\\/g, '/');
     const parts = relativePath.split('/');
     return parts.length > 1 ? parts[1] : parts[0] || 'root';
   }
@@ -117,27 +125,27 @@ export abstract class BaseAdapter implements LanguageAdapter {
  * 适配器注册表
  */
 export class AdapterRegistry {
-  private adapters: Map<string, LanguageAdapter> = new Map();
+  private adapters: LanguageAdapter[] = [];
   
   /**
    * 注册适配器
    */
   register(adapter: LanguageAdapter): void {
-    this.adapters.set(adapter.language, adapter);
+    this.adapters.push(adapter);
   }
   
   /**
    * 获取适配器
    */
   get(language: string): LanguageAdapter | undefined {
-    return this.adapters.get(language);
+    return this.adapters.find(adapter => adapter.language === language);
   }
   
   /**
    * 查找能处理该文件的适配器
    */
   findForFile(filePath: string): LanguageAdapter | undefined {
-    for (const adapter of this.adapters.values()) {
+    for (const adapter of this.adapters) {
       if (adapter.canHandle(filePath)) {
         return adapter;
       }
@@ -149,6 +157,6 @@ export class AdapterRegistry {
    * 获取所有已注册的语言
    */
   getRegisteredLanguages(): string[] {
-    return Array.from(this.adapters.keys());
+    return [...new Set(this.adapters.map(adapter => adapter.language))];
   }
 }

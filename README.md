@@ -14,7 +14,7 @@
 
 ```
 bee-knowledge/
-├── src/knowledge-system/     # 核心代码
+├── knowledge-system/         # 核心代码
 │   ├── adapters/             # 语言适配器
 │   │   ├── typescript.ts
 │   │   ├── go.ts
