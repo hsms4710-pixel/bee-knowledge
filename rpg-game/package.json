@@ -1,0 +1,24 @@
+{
+  "name": "rpg-game",
+  "version": "1.0.0",
+  "description": "A complex RPG game built with Graph-Driven Development",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": ["rpg", "game", "typescript"],
+  "author": "GDD Test",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0"
+  }
+}

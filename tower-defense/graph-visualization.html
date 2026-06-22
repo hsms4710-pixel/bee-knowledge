@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GDD 图谱可视化 - Tower Defense</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #fff;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 28px;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px 25px;
+      border-radius: 8px;
+      min-width: 120px;
+      text-align: center;
+    }
+    .stat-card .label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 5px;
+    }
+    .stat-card .value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #FFD700;
+    }
+    .graph-container {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+    .layer {
+      margin-bottom: 30px;
+    }
+    .layer-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .layer-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-right: 15px;
+    }
+    .layer-count {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    .nodes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .node {
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+    .node:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .node.active {
+      border-color: #FFD700;
+    }
+    .L1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .L2 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+    .L3 { background: linear-gradient(135deg, #fc4a1a, #f7b733); }
+    .L4 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+    .L5 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+    .connections {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 30px;
+    }
+    .connection-item {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+    }
+    .arrow {
+      margin: 0 15px;
+      color: #FFD700;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      color: #888;
+      font-size: 14px;
+    }
+    .play-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+      padding: 15px 40px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 18px;
+      margin-top: 20px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    .play-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎮 GDD 图谱可视化 - Tower Defense Game</h1>
+    
+    <div class="stats">
+      <div class="stat-card">
+        <div class="label">图谱 ID</div>
+        <div class="value">tower-defense-game</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">节点数量</div>
+        <div class="value">43</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">边数量</div>
+        <div class="value">5</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">架构层数</div>
+        <div class="value">5</div>
+      </div>
+    </div>
+    
+    <div class="graph-container">
+      <div class="layer">
+        <div class="layer-header">
+          <span class="layer-title">L1 - Constitution (项目宪法)</span>
+          <span class="layer-count">3 个节点</span>
+        </div>
+        <div class="nodes">
+          <div class="node L1">游戏性优先</div>
+          <div class="node L1">性能优化</div>
+          <div class="node L1">用户体验</div>
+        </div>
+      </div>
+      
+      <div class="layer">
+        <div class="layer-header">
+          <span class="layer-title">L2 - TechStack (技术栈)</span>
+          <span class="layer-count">3 个节点</span>
+        </div>
+        <div class="nodes">
+          <div class="node L2">TypeScript 5.x</div>
+          <div class="node L2">HTML5 Canvas 2D</div>
+          <div class="node L2">Vite 5.x</div>
+        </div>
+      </div>
+      
+      <div class="layer">
+        <div class="layer-header">
+          <span class="layer-title">L3 - Epic (史诗功能)</span>
+          <span class="layer-count">6 个节点</span>
+        </div>
+        <div class="nodes">
+          <div class="node L3">防御塔系统</div>
+          <div class="node L3">敌人系统</div>
+          <div class="node L3">路径系统</div>
+          <div class="node L3">波次系统</div>
+          <div class="node L3">升级系统</div>
+          <div class="node L3">游戏UI</div>
+        </div>
+      </div>
+      
+      <div class="layer">
+        <div class="layer-header">
+          <span class="layer-title">L4 - Story (故事功能)</span>
+          <span class="layer-count">13 个节点</span>
+        </div>
+        <div class="nodes">
+          <div class="node L4">箭塔 (伤害10, 射程150)</div>
+          <div class="node L4">魔法塔 (伤害25, 射程120)</div>
+          <div class="node L4">炮塔 (伤害50, 射程100)</div>
+          <div class="node L4">基础敌人 (血量50, 速度1)</div>
+          <div class="node L4">快速敌人 (血量30, 速度2.5)</div>
+          <div class="node L4">坦克敌人 (血量200, 速度0.5)</div>
+          <div class="node L4">飞行敌人 (血量80, 速度1.5)</div>
+          <div class="node L4">波次生成器 (10波)</div>
+          <div class="node L4">金币系统 (初始200)</div>
+          <div class="node L4">生命值系统 (最大20)</div>
+          <div class="node L4">游戏菜单</div>
+          <div class="node L4">战斗HUD</div>
+        </div>
+      </div>
+      
+      <div class="layer">
+        <div class="layer-header">
+          <span class="layer-title">L5 - Task (具体任务)</span>
+          <span class="layer-count">16 个节点</span>
+        </div>
+        <div class="nodes">
+          <div class="node L5">实现 Tower 基类</div>
+          <div class="node L5">实现 ArrowTower</div>
+          <div class="node L5">实现 MagicTower</div>
+          <div class="node L5">实现 CannonTower</div>
+          <div class="node L5">实现 Enemy 基类</div>
+          <div class="node L5">实现 PathSystem</div>
+          <div class="node L5">实现 WaveManager</div>
+          <div class="node L5">实现 GameEngine</div>
+          <div class="node L5">实现 Renderer</div>
+          <div class="node L5">实现 MainMenu UI</div>
+          <div class="node L5">实现 HUD UI</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="connections">
+      <h3 style="margin-bottom: 20px;">🔗 节点连接关系</h3>
+      <div class="connection-item">
+        <span>游戏性优先 (L1)</span>
+        <span class="arrow">→ 包含 →</span>
+        <span>TypeScript (L2)</span>
+      </div>
+      <div class="connection-item">
+        <span>防御塔系统 (L3)</span>
+        <span class="arrow">→ 实现 →</span>
+        <span>Tower 基类 (L5)</span>
+      </div>
+      <div class="connection-item">
+        <span>Tower 基类 (L5)</span>
+        <span class="arrow">→ 继承 →</span>
+        <span>ArrowTower (L5)</span>
+      </div>
+      <div class="connection-item">
+        <span>Tower 基类 (L5)</span>
+        <span class="arrow">→ 继承 →</span>
+        <span>MagicTower (L5)</span>
+      </div>
+      <div class="connection-item">
+        <span>Tower 基类 (L5)</span>
+        <span class="arrow">→ 继承 →</span>
+        <span>CannonTower (L5)</span>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>使用 GDD (Graph-Driven Development) MCP 工具开发</p>
+      <p>流程: Brainstorm 澄清 → 图谱构建 → 代码索引 → 代码生成</p>
+      <a href="index.html" class="play-button">🎮 玩游戏</a>
+    </div>
+  </div>
+</body>
+</html>

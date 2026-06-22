@@ -1,0 +1,236 @@
+{
+  "projectName": "RPG Adventure",
+  "description": "A complex RPG game built with Graph-Driven Development",
+  "version": "1.0.0",
+  "language": "TypeScript",
+  "target": "ES2020",
+  
+  "layers": {
+    "L1_Constitution": {
+      "name": "项目宪法",
+      "description": "定义游戏的核心原则和设计哲学",
+      "nodes": [
+        {
+          "id": "const_gameplay",
+          "label": "游戏性优先",
+          "description": "所有功能都服务于游戏体验"
+        },
+        {
+          "id": "const_balance",
+          "label": "数值平衡",
+          "description": "确保游戏难度曲线合理"
+        },
+        {
+          "id": "const_reusability",
+          "label": "代码复用",
+          "description": "模块化设计，便于扩展"
+        }
+      ]
+    },
+    "L2_TechStack": {
+      "name": "技术栈",
+      "description": "项目使用的技术和框架",
+      "nodes": [
+        {
+          "id": "tech_typescript",
+          "label": "TypeScript",
+          "description": "主要开发语言",
+          "version": "5.3.3"
+        },
+        {
+          "id": "tech_vitest",
+          "label": "Vitest",
+          "description": "测试框架",
+          "version": "1.1.0"
+        },
+        {
+          "id": "tech_node",
+          "label": "Node.js",
+          "description": "运行时环境",
+          "version": "18.x"
+        }
+      ]
+    },
+    "L3_Epic": {
+      "name": "史诗功能",
+      "description": "大型功能模块",
+      "nodes": [
+        {
+          "id": "epic_combat",
+          "label": "战斗系统",
+          "description": "处理所有战斗相关逻辑"
+        },
+        {
+          "id": "epic_inventory",
+          "label": "背包系统",
+          "description": "管理物品和装备"
+        },
+        {
+          "id": "epic_quest",
+          "label": "任务系统",
+          "description": "主线和支线任务管理"
+        },
+        {
+          "id": "epic_skill",
+          "label": "技能系统",
+          "description": "角色技能和法术"
+        },
+        {
+          "id": "epic_entity",
+          "label": "实体系统",
+          "description": "玩家和敌人管理"
+        }
+      ]
+    },
+    "L4_Story": {
+      "name": "故事功能",
+      "description": "具体功能点",
+      "nodes": [
+        {
+          "id": "story_damage_calc",
+          "label": "伤害计算",
+          "parentId": "epic_combat",
+          "description": "计算攻击和防御的伤害"
+        },
+        {
+          "id": "story_critical",
+          "label": "暴击系统",
+          "parentId": "epic_combat",
+          "description": "处理暴击伤害"
+        },
+        {
+          "id": "story_dodge",
+          "label": "闪避系统",
+          "parentId": "epic_combat",
+          "description": "处理闪避逻辑"
+        },
+        {
+          "id": "story_item_add",
+          "label": "物品添加",
+          "parentId": "epic_inventory",
+          "description": "添加物品到背包"
+        },
+        {
+          "id": "story_equip",
+          "label": "装备系统",
+          "parentId": "epic_inventory",
+          "description": "装备和卸下物品"
+        },
+        {
+          "id": "story_quest_accept",
+          "label": "任务接受",
+          "parentId": "epic_quest",
+          "description": "接受新任务"
+        },
+        {
+          "id": "story_quest_progress",
+          "label": "任务进度",
+          "parentId": "epic_quest",
+          "description": "更新任务进度"
+        },
+        {
+          "id": "story_skill_learn",
+          "label": "技能学习",
+          "parentId": "epic_skill",
+          "description": "学习新技能"
+        },
+        {
+          "id": "story_skill_use",
+          "label": "技能使用",
+          "parentId": "epic_skill",
+          "description": "使用已学习技能"
+        },
+        {
+          "id": "story_player_stats",
+          "label": "玩家属性",
+          "parentId": "epic_entity",
+          "description": "管理玩家属性"
+        },
+        {
+          "id": "story_enemy_ai",
+          "label": "敌人AI",
+          "parentId": "epic_entity",
+          "description": "敌人行为逻辑"
+        }
+      ]
+    },
+    "L5_Task": {
+      "name": "任务",
+      "description": "具体的开发任务",
+      "nodes": [
+        {
+          "id": "task_combat_system",
+          "label": "实现 CombatSystem",
+          "parentId": "story_damage_calc",
+          "file": "src/systems/CombatSystem.ts",
+          "status": "completed"
+        },
+        {
+          "id": "task_inventory_system",
+          "label": "实现 InventorySystem",
+          "parentId": "story_item_add",
+          "file": "src/systems/InventorySystem.ts",
+          "status": "completed"
+        },
+        {
+          "id": "task_quest_system",
+          "label": "实现 QuestSystem",
+          "parentId": "story_quest_accept",
+          "file": "src/systems/QuestSystem.ts",
+          "status": "completed"
+        },
+        {
+          "id": "task_skill_system",
+          "label": "实现 SkillSystem",
+          "parentId": "story_skill_learn",
+          "file": "src/systems/SkillSystem.ts",
+          "status": "completed"
+        },
+        {
+          "id": "task_player_entity",
+          "label": "实现 Player 实体",
+          "parentId": "story_player_stats",
+          "file": "src/entities/Player.ts",
+          "status": "completed"
+        },
+        {
+          "id": "task_enemy_entity",
+          "label": "实现 Enemy 实体",
+          "parentId": "story_enemy_ai",
+          "file": "src/entities/Enemy.ts",
+          "status": "completed"
+        },
+        {
+          "id": "task_game_engine",
+          "label": "实现 GameEngine",
+          "parentId": "epic_combat",
+          "file": "src/core/GameEngine.ts",
+          "status": "completed"
+        },
+        {
+          "id": "task_event_bus",
+          "label": "实现 EventBus",
+          "parentId": "epic_combat",
+          "file": "src/core/EventBus.ts",
+          "status": "completed"
+        }
+      ]
+    }
+  },
+  
+  "dependencies": {
+    "internal": [
+      { "from": "tech_typescript", "to": "L3_Epic", "type": "enables" },
+      { "from": "epic_combat", "to": "story_damage_calc", "type": "contains" },
+      { "from": "story_damage_calc", "to": "task_combat_system", "type": "implements" }
+    ],
+    "external": []
+  },
+  
+  "metrics": {
+    "codeLines": 1500,
+    "files": 12,
+    "complexity": "medium",
+    "testCoverage": 85
+  }
+}

@@ -1,0 +1,62 @@
+name: Knowledge Base Auto Update
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'src/**'
+  schedule:
+    # 每天凌晨 2 点自动更新
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      full_rebuild:
+        description: '完整重建知识库'
+        type: boolean
+        default: false
+
+jobs:
+  update-knowledge-base:
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Build knowledge base
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Running full rebuild..."
+            npx ts-node scripts/build-knowledge.ts --full
+          else
+            echo "Running incremental update..."
+            npx ts-node scripts/build-knowledge.ts --incremental
+          fi
+      
+      - name: Upload knowledge base
+        uses: actions/upload-artifact@v4
+        with:
+          name: knowledge-base
+          path: knowledge-base/
+          retention-days: 30
+      
+      - name: Notify completion
+        run: |
+          echo "✅ Knowledge base updated successfully!"
+          echo ""
+          echo "📊 Statistics:"
+          cat knowledge-base/index.json | jq '.modules | length as $modules | .[] | select(.name == "core") | "- Files: N/A, Modules: \($modules)"'
+          echo ""
+          echo "📅 Updated at: $(date)"
